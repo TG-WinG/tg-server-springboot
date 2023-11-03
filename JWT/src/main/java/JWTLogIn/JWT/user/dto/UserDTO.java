@@ -32,4 +32,14 @@ public class UserDTO {
 
         return userDTO;
     }
+
+    public UserEntity toEntity() {
+        return UserEntity.builder()
+                .studentId(studentId)
+                .password(password)
+                .name(name)
+                .status(status)
+                .semester(semester)
+                .phoneNumber(phoneNumber).build();
+    }
 }

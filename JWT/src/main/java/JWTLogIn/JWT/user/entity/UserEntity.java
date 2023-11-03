@@ -4,10 +4,13 @@ import JWTLogIn.JWT.user.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
+@Builder
+@NoArgsConstructor @AllArgsConstructor
 @Table(name = "user_table")
 public class UserEntity {
     @Id
@@ -32,19 +35,21 @@ public class UserEntity {
     @Column(nullable = false, unique = true, length = 13)
     private String phoneNumber; // 전화번호(13글자로 설정)
 
-//    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
-//    private PostEntity post; // 연관매핑 아직 공부해야함.
+    // 연관매핑: 일대다
+    // 참조 당하는 엔티티에서 사용
+    // mappedBy - 양방향 매핑 시 어떤 변수로 참조되었는지 알려주는
+//    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+//    @JoinColumn(name="student_id")
+//    private List<PostEntity> posts = new ArrayList<>(); // 연관매핑 아직 공부해야함.
 
     public static UserEntity toUserEntity(UserDTO userDTO) {
-        UserEntity userEntity = new UserEntity();
-
-        userEntity.setStudentId(userDTO.getStudentId());
-        userEntity.setPassword(userDTO.getPassword());
-        userEntity.setName(userDTO.getName());
-        userEntity.setStatus(userDTO.getStatus());
-        userEntity.setSemester(userDTO.getSemester());
-        userEntity.setPhoneNumber(userDTO.getPhoneNumber());
-
-        return userEntity;
+        return UserEntity.builder()
+                .studentId(userDTO.getStudentId())
+                .password(userDTO.getPassword())
+                .name(userDTO.getName())
+                .status(userDTO.getStatus())
+                .semester(userDTO.getSemester())
+                .phoneNumber(userDTO.getPhoneNumber())
+                .build();
     }
 }
