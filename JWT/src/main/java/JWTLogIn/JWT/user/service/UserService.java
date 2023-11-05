@@ -14,7 +14,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     public void userSave(UserDTO userDTO) {
-        UserEntity userEntity = UserEntity.toUserEntity(userDTO);
+        UserEntity userEntity = UserDTO.toUserEntity(userDTO);
         userRepository.save(userEntity);
     } // 회원 정보 저장
 
@@ -27,7 +27,7 @@ public class UserService {
                 // 'J      W      T' 내용 토큰?같은거 만들기
                 // 내용 작성...
 
-                UserDTO userDTO = UserDTO.toUserDTO(userEntity.get());
+                UserDTO userDTO = UserEntity.toUserDTO(userEntity.get());
                 return userDTO;
             }
             else { // password 일치하지 않을 경우

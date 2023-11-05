@@ -42,14 +42,14 @@ public class UserEntity {
 //    @JoinColumn(name="student_id")
 //    private List<PostEntity> posts = new ArrayList<>(); // 연관매핑 아직 공부해야함.
 
-    public static UserEntity toUserEntity(UserDTO userDTO) {
-        return UserEntity.builder()
-                .studentId(userDTO.getStudentId())
-                .password(userDTO.getPassword())
-                .name(userDTO.getName())
-                .status(userDTO.getStatus())
-                .semester(userDTO.getSemester())
-                .phoneNumber(userDTO.getPhoneNumber())
+    public static UserDTO toUserDTO(UserEntity userEntity) {
+        return UserDTO.builder()
+                .studentId(userEntity.getStudentId())
+                .password(userEntity.getPassword())
+                .name(userEntity.getName())
+                .status(userEntity.getStatus())
+                .semester(userEntity.getSemester())
+                .phoneNumber(userEntity.getPhoneNumber())
                 .build();
     }
 }

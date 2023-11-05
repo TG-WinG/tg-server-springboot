@@ -1,15 +1,11 @@
 package JWTLogIn.JWT.user.dto;
 
 import JWTLogIn.JWT.user.entity.UserEntity;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@ToString
+
+@Data
+@Builder
 public class UserDTO {
 
     private Long id;
@@ -20,26 +16,14 @@ public class UserDTO {
     private String semester; // 학년, 학기(3글자로 설정)
     private String phoneNumber; // 전화번호(13글자로 설정)
 
-    public static UserDTO toUserDTO(UserEntity userEntity) {
-        UserDTO userDTO = new UserDTO();
 
-        userDTO.setStudentId(userEntity.getStudentId());
-        userDTO.setPassword(userEntity.getPassword());
-        userDTO.setName(userEntity.getName());
-        userDTO.setStatus(userEntity.getStatus());
-        userDTO.setSemester(userEntity.getSemester());
-        userDTO.setPhoneNumber(userEntity.getPhoneNumber());
-
-        return userDTO;
-    }
-
-    public UserEntity toEntity() {
+    public static UserEntity toUserEntity(UserDTO userDTO) {
         return UserEntity.builder()
-                .studentId(studentId)
-                .password(password)
-                .name(name)
-                .status(status)
-                .semester(semester)
-                .phoneNumber(phoneNumber).build();
+                .studentId(userDTO.getStudentId())
+                .password(userDTO.getPassword())
+                .name(userDTO.getName())
+                .status(userDTO.getStatus())
+                .semester(userDTO.getSemester())
+                .phoneNumber(userDTO.getPhoneNumber()).build();
     }
 }
