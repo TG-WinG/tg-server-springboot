@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
+    @GetMapping("/tgwing.kr")
+    public ResponseEntity<Void> mainPage() {
+
+        return ResponseEntity.ok().build();
+    } // main 페이지. 추후 구현함. JWT 필요.(로그인 이전, 이후때문에)
+
     @CrossOrigin
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody UserDTO userDTO) {
@@ -36,14 +42,20 @@ public class UserController {
         return ResponseEntity.ok(login);
     } // 회원 로그인
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+
+        return ResponseEntity.ok().build();
+    } // 회원 로그아웃. 추후 구현함. JWT 필요
+
     @DeleteMapping("/profile/delete/{id}")
-    public ResponseEntity<Void> withdrwal(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteId(@PathVariable Long id) {
         if(userService.withdrawalUser(id)) {
             System.out.println("회원 삭제 완료");
             return ResponseEntity.ok().build();
         }
         System.out.println("회원을 찾을 수 없음.");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
+    }// 회원 탈퇴
 
 }
