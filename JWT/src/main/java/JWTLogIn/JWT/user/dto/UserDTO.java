@@ -6,6 +6,7 @@ import lombok.*;
 
 @Data
 @Builder
+@NoArgsConstructor @AllArgsConstructor
 public class UserDTO {
 
     private Long id;
@@ -24,6 +25,7 @@ public class UserDTO {
                 .name(userDTO.getName())
                 .status(userDTO.getStatus())
                 .semester(userDTO.getSemester())
-                .phoneNumber(userDTO.getPhoneNumber()).build();
+                .phoneNumber(userDTO.getPhoneNumber())
+                .build();
     }
 }
