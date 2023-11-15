@@ -17,6 +17,7 @@ public class PostDto {
                 .author(postDto.author)
                 .title(postDto.title)
                 .description(postDto.description)
+                .isAdmin(Boolean.TRUE)
                 .picture(postDto.picture).build();
     }
 }
