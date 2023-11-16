@@ -20,5 +20,17 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("DELETE FROM UserEntity U WHERE U.id = :id")
     void deleteUser(@Param("id") Long id);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE UserEntity u SET " +
+            "u.level = :level " +
+            "WHERE u.id = :id")
+    void changeLv (@Param("id") Long id, @Param("level") String level);
+
+
+//    @Query("UPDATE BoardEntity b SET " +
+//            "b.boardCurrentStudents = :boardCurrentStudents " +
+//            "WHERE b.boardId = :boardId")
+
     Page<UserEntity> findAll(Pageable pageable);
 }

@@ -7,6 +7,9 @@ import JWTLogIn.JWT.user.repository.UserRepository;
 import JWTLogIn.JWT.user.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -66,4 +69,25 @@ public class UserService {
         }
         return userDTOList;
     }// 모든 회원 찾기
+
+    public Page<UserDTO> findUserAllByPage(PageRequest request) {
+        Page<UserEntity> pages = userRepository.findAll(request);
+        Page<UserDTO> userDTOPage = pages.map(item -> UserEntity.toUserDTO(item));
+//        List<UserEntity> content = pages.getContent();
+//        List<UserDTO> userDTOList = new ArrayList<>();
+//
+//        for(UserEntity userEntity : content) {
+//            UserDTO userDTO = UserEntity.toUserDTO(userEntity);
+//            userDTOList.add(userDTO);
+//        }
+        return userDTOPage;
+    }
+
+    public void changeLevel(Long id, String level) {
+        Optional<UserEntity> user = userRepository.findById(id);
+        if(user.isPresent()) {
+            userRepository.changeLv(user.get().getId(), level);
+        }
+    } // 회원의 level 변경
+
 }

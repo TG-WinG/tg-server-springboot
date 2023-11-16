@@ -3,6 +3,8 @@ package JWTLogIn.JWT.user.entity;
 import JWTLogIn.JWT.user.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@DynamicInsert
 @NoArgsConstructor @AllArgsConstructor
 @Table(name = "user_table")
 public class UserEntity {
@@ -35,6 +38,10 @@ public class UserEntity {
     @Column(nullable = false, unique = true, length = 13)
     private String phoneNumber; // 전화번호(13글자로 설정)
 
+    @Column(length = 7)
+    @ColumnDefault("'Normal'")
+    private String level;
+
     // 연관매핑: 일대다
     // 참조 당하는 엔티티에서 사용
     // mappedBy - 양방향 매핑 시 어떤 변수로 참조되었는지 알려주는
@@ -44,12 +51,14 @@ public class UserEntity {
 
     public static UserDTO toUserDTO(UserEntity userEntity) {
         return UserDTO.builder()
+                .id(userEntity.getId())
                 .studentId(userEntity.getStudentId())
                 .password(userEntity.getPassword())
                 .name(userEntity.getName())
                 .status(userEntity.getStatus())
                 .semester(userEntity.getSemester())
                 .phoneNumber(userEntity.getPhoneNumber())
+                .level(userEntity.getLevel())
                 .build();
     }
 }
