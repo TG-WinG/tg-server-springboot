@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,16 +24,28 @@ public class UserService {
     private String secretKey;
 
     private final UserRepository userRepository;
-    public void userSave(UserDTO userDTO) {
+
+    public void userSave(UserDTO userDTO) throws Exception {
+        Optional<UserEntity> studentId = userRepository.findByStudentId(userDTO.getStudentId());
+        if(studentId.isPresent())
+            throw new Exception("This studentId already exist.");
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         UserEntity userEntity = UserDTO.toUserEntity(userDTO);
-        userRepository.save(userEntity);
+        userEntity.hashPassword(bCryptPasswordEncoder); // 유저 비밀번호 암호화 과정
+
+        userRepository.save(userEntity); // 그대로 저장함
     } // 회원 정보 저장
 
-    public String login(LogInDTO logInDTO) {
+
+    public String login(LogInDTO logInDTO){
         Optional<UserEntity> userEntity = userRepository.findByStudentId(logInDTO.getStudentId());
+        UserEntity user = userEntity.get();
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
         if(userEntity.isPresent()) { // 학번을 통해 찾은 user의 정보가 존재한다면
-            if(userEntity.get().getPassword().equals(logInDTO.getPassword())) {
-                return JwtUtil.createJwt(userEntity.get().getName(), userEntity.get().getStudentId(), secretKey);
+            if(user.checkPassword(logInDTO.getPassword(), bCryptPasswordEncoder)) {
+                return JwtUtil.createJwt(user.getName(), user.getStudentId(), secretKey);
             }
             else { // password 일치하지 않을 경우
                 return null;
@@ -43,6 +55,7 @@ public class UserService {
             return null;
         }
     }// login. null일 경우 회원정보 불일치함. 아닐 경우, 회원정보 일치. 회원 정보 return.
+
 
     public Boolean withdrawalUser(Long id) {
         Optional<UserEntity> find = userRepository.findById(id);
@@ -54,6 +67,7 @@ public class UserService {
             return false;
         }
     }// 회원 삭제
+
 
     public List<UserDTO> findUserAll() {
         List<UserEntity> allUser = userRepository.findAll();
@@ -70,6 +84,7 @@ public class UserService {
         return userDTOList;
     }// 모든 회원 찾기
 
+
     public Page<UserDTO> findUserAllByPage(PageRequest request) {
         Page<UserEntity> pages = userRepository.findAll(request);
         Page<UserDTO> userDTOPage = pages.map(item -> UserEntity.toUserDTO(item));
@@ -82,6 +97,7 @@ public class UserService {
 //        }
         return userDTOPage;
     }
+
 
     public void changeLevel(Long id, String level) {
         Optional<UserEntity> user = userRepository.findById(id);

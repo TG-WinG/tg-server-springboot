@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class UserEntity {
     // 연관매핑: 일대다
     // 참조 당하는 엔티티에서 사용
     // mappedBy - 양방향 매핑 시 어떤 변수로 참조되었는지 알려주는
-//    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 //    @JoinColumn(name="student_id")
 //    private List<PostEntity> posts = new ArrayList<>(); // 연관매핑 아직 공부해야함.
 
@@ -61,4 +62,23 @@ public class UserEntity {
                 .level(userEntity.getLevel())
                 .build();
     }
+
+    /*
+    * param : 암호화할 인코더 클레스
+    * return : 변경된 유저의 entity(비밀번호)
+    */
+    public UserEntity hashPassword(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
+        return this;
+    } // 비밀번호 암호화 과정. entity의 기존 비밀번호를 암호화시킴.
+
+
+    /*
+    * param1 : 암호화전 비밀번호
+    * param2 : 암호화에 사용된 class
+    * return : 같은지 다른지. true false
+    * */
+    public Boolean checkPassword(String password, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(password, this.password);
+    } // 비밀번호 확인
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/tgwing.kr")
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
 
     @GetMapping
@@ -22,11 +23,11 @@ public class UserController {
 
     @CrossOrigin
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Void> register(@RequestBody UserDTO userDTO) throws Exception {
         System.out.println("User Register");
         System.out.println("userDTO = " + userDTO);
-        userService.userSave(userDTO); // 회원 저장
 
+        userService.userSave(userDTO); // 회원 저장
         return ResponseEntity.ok().build();
     } // 회원 저장
 
