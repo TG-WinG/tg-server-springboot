@@ -46,6 +46,6 @@ public class SecurityConfig {
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
-    } // 생성자 선언해둬야함
+    } // 생성자 선언해둬야함... 해야되나?
 
 }

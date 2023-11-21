@@ -7,6 +7,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 
 public class JwtUtil {
+
+    public static Boolean isExpired(String token, String secretKey) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
+                .getBody().getExpiration().before(new Date());
+    }// 현재의 토큰의 만료시간이 현재보다 이전인지 아닌지 확인함.ㄷ
     public static String createJwt(String name, String studentId, String secretKey) {
         // name : token에 들어있는 것으로 사용함
         // secretKey : 서명

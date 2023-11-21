@@ -25,29 +25,29 @@ public class AdminController {
         return ResponseEntity.ok(userAll);
     }
 
-    @GetMapping("/tgwing.kr/userlist?page={page}")
-    public ResponseEntity<Page<UserDTO>> userPage(@RequestParam(value = "page", defaultValue = "0") Integer page, Pageable pageable) {
-        PageRequest pageRequest= PageRequest.of(page, 10);
+    @GetMapping("/userlist")
+    public ResponseEntity<Page<UserDTO>> userPage(@RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "size", defaultValue = "10") Integer size, Pageable pageable) {
+        PageRequest pageRequest= PageRequest.of(page, size);
         Page<UserDTO> userAllByPage = userService.findUserAllByPage(pageRequest);
 
         return ResponseEntity.ok(userAllByPage);
     }// 페이지마다의 회원 정보
 
-    @PutMapping("/tgwing.kr/userlist/put/manager/{userId}")
+    @PutMapping("/userlist/put/manager/{userId}")
     public ResponseEntity<Void> changeAdmin(@PathVariable Long userId) {
         userService.changeLevel(userId, "Manager");
 
         return ResponseEntity.ok().build();
     }// ??->관리자로 변경
 
-    @PutMapping("/tgwing.kr/userlist/put/member/{userId}")
+    @PutMapping("/userlist/put/member/{userId}")
     public ResponseEntity<Void> changeMember(@PathVariable Long userId) {
         userService.changeLevel(userId, "Member");
 
         return ResponseEntity.ok().build();
     }// ??->동아리로 변경
 
-    @PutMapping("/tgwing.kr/userlist/put/normal/{userId}")
+    @PutMapping("/  userlist/put/normal/{userId}")
     public ResponseEntity<Void> changeNormal(@PathVariable Long userId) {
         userService.changeLevel(userId, "Normal");
 
