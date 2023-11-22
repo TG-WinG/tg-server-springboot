@@ -2,6 +2,7 @@ package JWTLogIn.JWT.post.entity;
 
 import JWTLogIn.JWT.post.dto.PostDto;
 import JWTLogIn.JWT.user.entity.UserEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -39,6 +40,7 @@ public class PostEntity {
     // 참조하는(외래키를 가진) 엔티티에서 사용
     // FetchType (EAGER: 객체가 사용되지 않아도 조회 & 조회 시 연관 엔티티 한 번에 조회
     //            LAZY: 엔티티 사용 시점에 조회)
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="student_id", referencedColumnName = "student_id")
     private UserEntity user;

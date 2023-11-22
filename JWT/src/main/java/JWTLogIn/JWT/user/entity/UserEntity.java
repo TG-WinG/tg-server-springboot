@@ -39,7 +39,7 @@ public class UserEntity {
     // 연관매핑: 일대다
     // 참조 당하는 엔티티에서 사용
     // mappedBy - 양방향 매핑 시 어떤 변수로 참조되었는지 알려주는
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 //    @JoinColumn(name="student_id")
     private List<PostEntity> posts = new ArrayList<>(); // 연관매핑 아직 공부해야함.
 

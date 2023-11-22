@@ -6,9 +6,13 @@ import JWTLogIn.JWT.post.repository.PostRepository;
 import JWTLogIn.JWT.post.service.PostService;
 import JWTLogIn.JWT.user.entity.UserEntity;
 import JWTLogIn.JWT.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -119,6 +123,15 @@ public class PostController {
     }
 
 
+    @CrossOrigin
+    @GetMapping("/notice")
+    @Transactional
+    public ResponseEntity<Page> getPostsInPage(@RequestParam int page,
+                                               @RequestParam(required = false, defaultValue = "15") int size) {
+        System.out.println("-- Get Posts in Page --");
+        // 첫 번째 페이지 page = 0이므로, page-1로 전달 -> 1부터 요청할 수 있도록
+        Page<PostDto> postsInPage = postService.findPostsInPage(page-1, size);
 
-
+        return ResponseEntity.ok(postsInPage);
+    }
 }

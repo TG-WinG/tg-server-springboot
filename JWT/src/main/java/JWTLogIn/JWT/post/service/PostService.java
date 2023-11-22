@@ -6,6 +6,8 @@ import JWTLogIn.JWT.post.repository.PostRepository;
 import JWTLogIn.JWT.user.entity.UserEntity;
 import JWTLogIn.JWT.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import static JWTLogIn.JWT.post.dto.PostDto.toEntity;
 import static JWTLogIn.JWT.post.entity.PostEntity.toDto;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
@@ -60,7 +63,7 @@ public class PostService {
     {
         List<PostDto> postDtos = new ArrayList<>();
 
-        List<PostEntity> SearchedEntity = postRepository.findByTitleContains(search);
+        List<PostEntity> SearchedEntity = postRepository.findByDescriptionContains(search);
         for (PostEntity postEntity : SearchedEntity) {
             System.out.println("postEntity = " + postEntity);
             postDtos.add(toDto(postEntity));
@@ -115,4 +118,24 @@ public class PostService {
     {
         postRepository.deleteById(postId);
     }
+
+    public Page<PostDto> findPostsInPage(int page, int size) {
+        // Post DB에서 Page 단위로 가져오기
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<PostEntity> postPage = postRepository.findAllByOrderByIdDesc(pageRequest);
+
+        // Post 반환 + DTO로 변환
+        List<PostEntity> posts = postPage.getContent();
+        List<PostDto> postDtos = new ArrayList<>();
+        for (PostEntity postEntity : posts) {
+            PostDto dto = toDto(postEntity);
+            postDtos.add(dto);
+            postDtos.toString();
+        }
+
+        Page<PostDto> postDtoPage = postPage.map(PostEntity::toDto);
+
+        return postDtoPage;
+    }
+
 }
