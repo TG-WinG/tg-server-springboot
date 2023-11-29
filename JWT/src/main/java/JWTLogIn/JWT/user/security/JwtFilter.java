@@ -53,6 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+
         //Username Token에서 꺼내기
         //이를 통해 아래 UsernamePasswordAuthenticationToken에서 userName을 사용가능함.
         String name = JwtUtil.getUserName(token, secretKey);
@@ -64,7 +65,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // 권한 부여
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(name, null,
-                        List.of(new SimpleGrantedAuthority("name"), new SimpleGrantedAuthority(level)));
+                        List.of(new SimpleGrantedAuthority("name")));
         // Detail을 넣어줌
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         authenticationToken.setDetails(level);

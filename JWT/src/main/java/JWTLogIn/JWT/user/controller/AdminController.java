@@ -1,6 +1,8 @@
 package JWTLogIn.JWT.user.controller;
 
 import JWTLogIn.JWT.user.dto.UserDTO;
+import JWTLogIn.JWT.user.security.JwtUtil;
+import JWTLogIn.JWT.user.service.AuthService;
 import JWTLogIn.JWT.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,40 +20,70 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/tgwing.kr")
 public class AdminController {
+
     private final UserService userService;
+    private final AuthService authService;
+
     @GetMapping("/info/user")
     public ResponseEntity<List<UserDTO>> userAll(Authentication authentication) {
         List<UserDTO> userAll = userService.findUserAll();
         if(userAll == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        System.out.println("누군가가 회원의 전체목록을 확인했습니다." + authentication.getDetails());
 
         return ResponseEntity.ok(userAll);
     }
 
     @GetMapping("/userlist")
-    public ResponseEntity<Page<UserDTO>> userPage(Pageable pageable) {
+    public ResponseEntity<List<UserDTO>> userPage(Pageable pageable, @RequestHeader("authorization") String token) {
+        String jwt = token.split(" ")[1];
+        String level = authService.extractLevel(jwt);
+
+        if(!level.equals("Manager")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Page<UserDTO> userAllByPage = userService.findUserAllByPage(pageable);
 
-        return ResponseEntity.ok(userAllByPage);
+        return ResponseEntity.ok(userAllByPage.getContent());
     }// 페이지마다의 회원 정보
 
     @PutMapping("/userlist/put/manager/{userId}")
-    public ResponseEntity<Void> changeAdmin(@PathVariable Long userId) {
+    public ResponseEntity<Void> changeAdmin(@PathVariable Long userId, @RequestHeader("authorization") String token) {
+        String jwt = token.split(" ")[1];
+        String level = authService.extractLevel(jwt);
+
+        if(!level.equals("Manager")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         userService.changeLevel(userId, "Manager");
 
         return ResponseEntity.ok().build();
     }// ??->관리자로 변경
 
     @PutMapping("/userlist/put/member/{userId}")
-    public ResponseEntity<Void> changeMember(@PathVariable Long userId) {
+    public ResponseEntity<Void> changeMember(@PathVariable Long userId, @RequestHeader("authorization") String token) {
+        String jwt = token.split(" ")[1];
+        String level = authService.extractLevel(jwt);
+
+        if(!level.equals("Manager")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         userService.changeLevel(userId, "Member");
 
         return ResponseEntity.ok().build();
     }// ??->동아리로 변경
 
     @PutMapping("/userlist/put/normal/{userId}")
-    public ResponseEntity<Void> changeNormal(@PathVariable Long userId) {
+    public ResponseEntity<Void> changeNormal(@PathVariable Long userId, @RequestHeader("authorization") String token) {
+        String jwt = token.split(" ")[1];
+        String level = authService.extractLevel(jwt);
+
+        if(!level.equals("Manager")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         userService.changeLevel(userId, "Normal");
 
         return ResponseEntity.ok().build();

@@ -13,6 +13,7 @@ import java.util.Optional;
 
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
+
     Optional<UserEntity> findByStudentId(String studentId);
 
     @Modifying
