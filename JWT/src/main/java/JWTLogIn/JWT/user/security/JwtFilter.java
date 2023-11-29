@@ -28,17 +28,22 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        log.info("Authorization : {}", authorization); // slf4j에서 log를 찍어서 확인함.
+        log.info("Authorization : {}", authorization);
+        // slf4j에서 log를 찍어서 확인함.
 
         if(authorization.isEmpty() || !authorization.startsWith("Bearer ")) {
             log.error("권한이 없음.");
             filterChain.doFilter(request, response);
             return;
-        } // authentication이 없을 경우, token이 없을 경우, 혹은 "Bearer "로 시작하지 않으면 block함.
+        }
+        // authentication이 없을 경우, token이 없을 경우, 혹은 "Bearer "로 시작하지 않으면 block함.
         // 이 때 header의 authorization의 부분에서 어떤 입력이라도 있으면 200이 됨.
 
+
+
+        String token = authorization.split(" ")[1];
         // 토큰 꺼내기
-        String token = authorization.split(" ")[1]; // authorization의 첫번째 부분이 토큰이다.
+        // authorization의 첫번째 부분이 토큰이다.
         // 띄워쓰기를 쪼개는 방식으로 가져갈 때, Bearer다음의 부분이 토큰이다.
 
         // 토큰 유효기간 확인
@@ -49,13 +54,20 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         //Username Token에서 꺼내기
-        String userName = "";
+        //이를 통해 아래 UsernamePasswordAuthenticationToken에서 userName을 사용가능함.
+        String name = JwtUtil.getUserName(token, secretKey);
+        String level = JwtUtil.getLevel(token, secretKey);
+
+        log.info("name : {}", name);
+        log.info("level : {}", level);
 
         // 권한 부여
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userName, null, List.of(new SimpleGrantedAuthority("name")));
+                new UsernamePasswordAuthenticationToken(name, null,
+                        List.of(new SimpleGrantedAuthority("name"), new SimpleGrantedAuthority(level)));
         // Detail을 넣어줌
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        authenticationToken.setDetails(level);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
 

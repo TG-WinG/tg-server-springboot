@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table(name = "post_table")
 public class PostEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,4 +23,5 @@ public class PostEntity {
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name="student_id", referencedColumnName = "studentId")
 //    private UserEntity user;
+
 }

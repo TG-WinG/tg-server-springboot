@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,17 +20,18 @@ import java.util.List;
 public class AdminController {
     private final UserService userService;
     @GetMapping("/info/user")
-    public ResponseEntity<List<UserDTO>> userAll() {
+    public ResponseEntity<List<UserDTO>> userAll(Authentication authentication) {
         List<UserDTO> userAll = userService.findUserAll();
         if(userAll == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        System.out.println("누군가가 회원의 전체목록을 확인했습니다." + authentication.getDetails());
+
         return ResponseEntity.ok(userAll);
     }
 
     @GetMapping("/userlist")
-    public ResponseEntity<Page<UserDTO>> userPage(@RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "size", defaultValue = "10") Integer size, Pageable pageable) {
-        PageRequest pageRequest= PageRequest.of(page, size);
-        Page<UserDTO> userAllByPage = userService.findUserAllByPage(pageRequest);
+    public ResponseEntity<Page<UserDTO>> userPage(Pageable pageable) {
+        Page<UserDTO> userAllByPage = userService.findUserAllByPage(pageable);
 
         return ResponseEntity.ok(userAllByPage);
     }// 페이지마다의 회원 정보
@@ -47,7 +50,7 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }// ??->동아리로 변경
 
-    @PutMapping("/  userlist/put/normal/{userId}")
+    @PutMapping("/userlist/put/normal/{userId}")
     public ResponseEntity<Void> changeNormal(@PathVariable Long userId) {
         userService.changeLevel(userId, "Normal");
 

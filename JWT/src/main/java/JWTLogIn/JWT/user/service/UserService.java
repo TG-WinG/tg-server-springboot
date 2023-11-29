@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,6 @@ public class UserService {
 
     @Value("${jwt.secret}")
     private String secretKey;
-
     private final UserRepository userRepository;
 
     public void userSave(UserDTO userDTO) throws Exception {
@@ -45,7 +45,7 @@ public class UserService {
 
         if(userEntity.isPresent()) { // 학번을 통해 찾은 user의 정보가 존재한다면
             if(user.checkPassword(logInDTO.getPassword(), bCryptPasswordEncoder)) {
-                return JwtUtil.createJwt(user.getName(), user.getStudentId(), secretKey);
+                return JwtUtil.createJwt(user.getName(), user.getStudentId(), user.getLevel(), secretKey);
             }
             else { // password 일치하지 않을 경우
                 return null;
@@ -85,7 +85,7 @@ public class UserService {
     }// 모든 회원 찾기
 
 
-    public Page<UserDTO> findUserAllByPage(PageRequest request) {
+    public Page<UserDTO> findUserAllByPage(Pageable request) {
         Page<UserEntity> pages = userRepository.findAll(request);
         Page<UserDTO> userDTOPage = pages.map(item -> UserEntity.toUserDTO(item));
 //        List<UserEntity> content = pages.getContent();
